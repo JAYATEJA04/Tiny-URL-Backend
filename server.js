@@ -9,31 +9,32 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.post("/originalLink", (req, res) => {
+const storeURLsObj = {};
+
+function generateUniqueShortURL() {
+  return Math.random().toString(36).substring(2, 8);
+}
+
+app.post("/short-url", (req, res) => {
   const requestBody = req.body;
 
   if (requestBody.keyName.toString().slice(-4) === ".com") {
-    res.send("Data Received");
+    const shortUniqueURL = generateUniqueShortURL();
+    // storeURLsObj.shortURL = shortUniqueURL;
+    // storeURLsObj.orignalUrl = requestBody.keyName;
+    // storeURLsObj["shortURL"] = shortUniqueURL;
+    // storeURLsObj["originalURL"] = requestBody.keyName;
+
+    storeURLsObj[shortUniqueURL] = requestBody.keyName;
+
+    console.log("store url object: ", storeURLsObj);
+
+    res.send(`https://127.0.0.1:3000/${shortUniqueURL}`);
   } else {
     res.send("enter a valid url!");
   }
 });
 
-// app.use();
-// const server = createServer((req, res) => {
-//   res.statusCode = 200;
-//   res.setHeader("Content-Type", "text/plain");
-//   res.end("HELLO MASTER!");
-// });
-
-// app.get("/", (req, res) => {
-//   res.send("hello express!");
-// });
-
 app.listen(3000, () => {
   console.log("Example app listening on port: 3000");
 });
-
-// server.listen(port, hostname, () => {
-//   console.log(`Server running at: http://${hostname}:${port}`);
-// });
