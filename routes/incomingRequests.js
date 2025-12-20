@@ -21,12 +21,24 @@ const shortenURL = async (req, res) => {
     // storeURLsObj[shortUniqueURL] = requestBody.keyName;
     storeURLs(requestBody.keyName, shortUniqueURL);
 
-    console.log("stored url object: ", storeURLsObj[0].shortURL);
+    console.log("stored url object: ", storeURLsObj);
 
     res.send(`http://127.0.0.1:3000/${shortUniqueURL}`);
   } else {
     res.send("enter a valid url!");
   }
+};
+
+export const redirectToOriginalURL = async (req, res) => {
+  const requestBody = storeURLsObj.get(req.params.shortcode);
+  console.log(requestBody);
+
+  if (!requestBody) {
+    return res.status(404).send("URL not found");
+  }
+  console.log("original url is: ", requestBody.originalURL);
+
+  res.redirect(requestBody.originalURL);
 };
 
 export default shortenURL;
