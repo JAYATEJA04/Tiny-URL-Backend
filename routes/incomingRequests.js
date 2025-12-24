@@ -7,8 +7,16 @@ function generateUniqueShortURL() {
   return Math.random().toString(36).substring(2, 8);
 }
 
+function normaliseURL(url) {
+  if (!url.startsWith("https://") && !url.startsWith("http://")) {
+    return "http://" + url;
+  }
+  return url;
+}
+
 function storeURLs(originalURL, shortURL, timestamp) {
-  const originalLink = "https://" + originalURL;
+  // const originalLink = "https://" + originalURL;
+  const originalLink = normaliseURL(originalURL);
   // console.log("type of store URLs object is: ", typeof storeURLsObj);
   const originalURLalreadyExists = Array.from(storeURLsObj.values()).some(
     (entry) => entry.originalLink === originalLink
@@ -28,11 +36,13 @@ function storeURLs(originalURL, shortURL, timestamp) {
 const shortenURL = async (req, res) => {
   const requestBody = req.body;
 
-  if (requestBody.keyName.toString().slice(-4) === ".com") {
+  // if (requestBody.keyName.toString().slice(-4) === ".com") {
+  if (requestBody.keyName.toString()) {
     const shortUniqueURL = generateUniqueShortURL();
+    console.log(typeof requestBody.keyName);
 
     const confirmationStatus = storeURLs(
-      requestBody.keyName,
+      requestBody.keyName.toLowerCase(),
       shortUniqueURL,
       requestBody.timestamp
     );
