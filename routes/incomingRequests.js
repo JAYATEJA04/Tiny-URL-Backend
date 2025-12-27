@@ -1,5 +1,7 @@
 import express from "express";
 const app = express();
+import Url from "../schema/dataSchema.js";
+import mongoose from "mongoose";
 
 const storeURLsObj = new Map();
 
@@ -34,33 +36,49 @@ function storeURLs(originalURL, shortURL, timestamp) {
 }
 
 const shortenURL = async (req, res) => {
-  const requestBody = req.body;
+  try {
+    const requestBody = req.body;
 
-  // if (requestBody.keyName.toString().slice(-4) === ".com") {
-  if (requestBody.keyName.toString()) {
-    const shortUniqueURL = generateUniqueShortURL();
-    console.log(typeof requestBody.keyName);
+    const generatedShortURL = generateUniqueShortURL();
 
-    const confirmationStatus = storeURLs(
-      requestBody.keyName.toLowerCase(),
-      shortUniqueURL,
-      requestBody.timestamp
-    );
-    console.log("stored url object: ", storeURLsObj);
-    res.send(confirmationStatus);
-  } else {
-    res.send("enter a valid url!");
+    // console.log(
+    //   `request body is: `,
+    //   requestBody,
+    //   ` & short unique url is: ${generatedShortURL}`
+    // );
+
+    const checkIfURLExists = await Url.findOne({
+      originalURL: requestBody.keyName,
+    });
+    // console.log("check if url exists: ", checkIfURLExists);
+    if (checkIfURLExists) {
+      return res.send(
+        `URL already exists and the URL is: http://127.0.0.1:3000/${checkIfURLExists.shortURL}`
+      );
+    } else {
+      const newEntryToDatabase = await Url.create({
+        shortURL: generatedShortURL,
+        originalURL: requestBody.keyName,
+      });
+
+      console.log(`the new entry is: ${newEntryToDatabase}`);
+      return res.send(`http://127.0.0.1:3000/${newEntryToDatabase.shortURL}`);
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 
 export const redirectToOriginalURL = async (req, res) => {
-  const requestBody = storeURLsObj.get(req.params.shortcode);
+  const { shortcode } = req.params;
 
-  if (!requestBody) {
-    return res.status(404).send("URL not found");
+  const searchedEntry = await Url.findOne({ shortURL: shortcode });
+
+  if (!searchedEntry) {
+    return res.send("error in finding the link");
   }
-
-  res.redirect(requestBody.originalLink);
+  console.log("the searched entry in redirect is: ", searchedEntry);
+  res.redirect(searchedEntry.originalURL);
 };
 
 export default shortenURL;

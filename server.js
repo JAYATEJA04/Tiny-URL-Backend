@@ -3,6 +3,8 @@ import express from "express";
 import { Router } from "express";
 import cors from "cors";
 import router from "./routes/urlRoutes.js";
+import Url from "./schema/dataSchema.js";
+import mongoose from "mongoose";
 
 const app = express();
 const hostname = "127.0.0.1";
@@ -16,7 +18,23 @@ const storeURLsObj = {};
 //   return Math.random().toString(36).substring(2, 8);
 // }
 
+mongoose
+  .connect(
+    "mongodb+srv://jayatejadev_db_user:hnEFhSHoouDkWz7c@tiny-url.nhzcst9.mongodb.net/?appName=tiny-url"
+  )
+  .then(() => console.log("connected to database"))
+  .catch((error) => console.error("Connection error: ", error));
+
 app.use(router);
+// app.get("/:shortCode", async (req, res) => {
+//   const url = await Url.findOne({ shortCode: req.params.shortCode });
+
+//   if (!url) {
+//     return res.status(404).send("data not found");
+//   }
+
+//   res.redirect(302, url.originalLink);
+// });
 
 // app.post("/short-url", (req, res) => {
 //   const requestBody = req.body;
