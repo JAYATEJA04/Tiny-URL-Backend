@@ -17,9 +17,8 @@ function normaliseURL(url) {
 }
 
 function storeURLs(originalURL, shortURL, timestamp) {
-  // const originalLink = "https://" + originalURL;
   const originalLink = normaliseURL(originalURL);
-  // console.log("type of store URLs object is: ", typeof storeURLsObj);
+
   const originalURLalreadyExists = Array.from(storeURLsObj.values()).some(
     (entry) => entry.originalLink === originalLink
   );
@@ -35,35 +34,37 @@ function storeURLs(originalURL, shortURL, timestamp) {
   return "URL is already stored.";
 }
 
+const storeURLInDatabase = async (originalURL, generatedShortURL) => {
+  const originalLink = normaliseURL(originalURL);
+
+  const checkIfURLExists = await Url.findOne({
+    originalURL: originalLink,
+  });
+
+  if (checkIfURLExists) {
+    return `URL already exists and the URL is: http://127.0.0.1:3000/${checkIfURLExists.shortURL}`;
+  } else {
+    const newEntryToDatabase = await Url.create({
+      shortURL: generatedShortURL,
+      originalURL: originalLink,
+    });
+
+    return `http://127.0.0.1:3000/${newEntryToDatabase.shortURL}`;
+  }
+};
+
 const shortenURL = async (req, res) => {
   try {
     const requestBody = req.body;
 
     const generatedShortURL = generateUniqueShortURL();
 
-    // console.log(
-    //   `request body is: `,
-    //   requestBody,
-    //   ` & short unique url is: ${generatedShortURL}`
-    // );
+    const newEntryToDatabase = await storeURLInDatabase(
+      requestBody.keyName,
+      generatedShortURL
+    );
 
-    const checkIfURLExists = await Url.findOne({
-      originalURL: requestBody.keyName,
-    });
-    // console.log("check if url exists: ", checkIfURLExists);
-    if (checkIfURLExists) {
-      return res.send(
-        `URL already exists and the URL is: http://127.0.0.1:3000/${checkIfURLExists.shortURL}`
-      );
-    } else {
-      const newEntryToDatabase = await Url.create({
-        shortURL: generatedShortURL,
-        originalURL: requestBody.keyName,
-      });
-
-      console.log(`the new entry is: ${newEntryToDatabase}`);
-      return res.send(`http://127.0.0.1:3000/${newEntryToDatabase.shortURL}`);
-    }
+    return res.send(newEntryToDatabase);
   } catch (error) {
     console.log(error);
   }
