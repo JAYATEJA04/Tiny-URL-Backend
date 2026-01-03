@@ -37,19 +37,23 @@ function storeURLs(originalURL, shortURL, timestamp) {
 const storeURLInDatabase = async (originalURL, generatedShortURL) => {
   const originalLink = normaliseURL(originalURL);
 
-  const checkIfURLExists = await Url.findOne({
-    originalURL: originalLink,
-  });
-
-  if (checkIfURLExists) {
-    return `URL already exists and the URL is: http://127.0.0.1:3000/${checkIfURLExists.shortURL}`;
-  } else {
-    const newEntryToDatabase = await Url.create({
-      shortURL: generatedShortURL,
+  try {
+    const checkIfURLExists = await Url.findOne({
       originalURL: originalLink,
     });
 
-    return `http://127.0.0.1:3000/${newEntryToDatabase.shortURL}`;
+    if (checkIfURLExists) {
+      return `URL already exists and the URL is: http://127.0.0.1:3000/${checkIfURLExists.shortURL}`;
+    } else {
+      const newEntryToDatabase = await Url.create({
+        shortURL: generatedShortURL,
+        originalURL: originalLink,
+      });
+
+      return `http://127.0.0.1:3000/${newEntryToDatabase.shortURL}`;
+    }
+  } catch (error) {
+    return `Error: ${error}`;
   }
 };
 
