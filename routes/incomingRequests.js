@@ -1,10 +1,5 @@
-import express, { request } from "express";
-const app = express();
 import Url from "../schema/dataSchema.js";
-import mongoose from "mongoose";
 import redisClient from "../redisClient.js";
-
-const storeURLsObj = new Map();
 
 function generateUniqueShortURL() {
   return Math.random().toString(36).substring(2, 8);
@@ -15,24 +10,6 @@ function normaliseURL(url) {
     return "http://" + url;
   }
   return url;
-}
-
-function storeURLs(originalURL, shortURL, timestamp) {
-  const originalLink = normaliseURL(originalURL);
-
-  const originalURLalreadyExists = Array.from(storeURLsObj.values()).some(
-    (entry) => entry.originalLink === originalLink
-  );
-
-  if (!originalURLalreadyExists) {
-    storeURLsObj.set(shortURL, {
-      originalLink: originalLink,
-      timestamp: timestamp,
-    });
-    return `http://127.0.0.1:3000/${shortURL}`;
-  }
-
-  return "URL is already stored.";
 }
 
 const storeURLInDatabase = async (originalURL, generatedShortURL) => {
