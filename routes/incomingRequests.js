@@ -98,7 +98,7 @@ export const redirectToOriginalURL = async (req, res) => {
   });
 
   console.log("the searched entry in redirect is: ", searchedEntry);
-  res.redirect(searchedEntry.originalURL);
+  res.redirect(302, searchedEntry.originalURL);
 };
 
 export default shortenURL;
