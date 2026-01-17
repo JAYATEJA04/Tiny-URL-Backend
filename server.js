@@ -5,7 +5,9 @@ import cors from "cors";
 import router from "./routes/urlRoutes.js";
 import Url from "./schema/dataSchema.js";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 const hostname = "127.0.0.1";
 const port = 3000;
@@ -19,9 +21,7 @@ const storeURLsObj = {};
 // }
 
 mongoose
-  .connect(
-    "mongodb+srv://jayatejadev_db_user:hnEFhSHoouDkWz7c@tiny-url.nhzcst9.mongodb.net/?appName=tiny-url"
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("connected to database"))
   .catch((error) => console.error("Connection error: ", error));
 
