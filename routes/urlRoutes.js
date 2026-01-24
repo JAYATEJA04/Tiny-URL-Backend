@@ -1,6 +1,6 @@
 import express from "express";
 import { Router } from "express";
-import shortenURL, { redirectToOriginalURL } from "./incomingRequests.js";
+import { redirectToOriginalURL } from "./incomingRequests.js";
 import createShortUniqueURL from "../controllers/url.controller.js";
 
 const router = Router();

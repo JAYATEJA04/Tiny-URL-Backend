@@ -7,7 +7,7 @@ export const redirectToOriginalURL = async (req, res) => {
   const cachedURL = await redisClient.get(shortcode);
   if (cachedURL) {
     console.log("Cache HIT!");
-    return res.redirect(cachedURL);
+    return res.redirect(302, cachedURL);
   }
 
   console.log("Cache MISS.");
@@ -15,7 +15,7 @@ export const redirectToOriginalURL = async (req, res) => {
   const searchedEntry = await Url.findOne({ shortURL: shortcode });
 
   if (!searchedEntry) {
-    return res.send("error in finding the link");
+    return res.status(404).send("error in finding the link");
   }
 
   //redis set
