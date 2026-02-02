@@ -1,5 +1,5 @@
 import encodeBase62 from "../base62.js";
-import Url from "../schema/dataSchema.js";
+import Url from "../models/dataModel.js";
 import getNextSequence from "../getNextSequence.js";
 
 function normaliseURL(url) {
@@ -17,7 +17,7 @@ const createShortUniqueURL = async (req, res) => {
   const existing = await Url.findOne({ originalURL: originalLink });
   if (existing) {
     return res.send(
-      `URL already exists and the URL is: http://127.0.0.1:3000/${existing.shortURL}`
+      `URL already exists and the URL is: http://127.0.0.1:3000/${existing.shortURL}`,
     );
   }
 

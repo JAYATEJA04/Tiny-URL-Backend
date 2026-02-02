@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-mongoose.connect(
-  "mongodb+srv://jayatejadev_db_user:hnEFhSHoouDkWz7c@tiny-url.nhzcst9.mongodb.net/?appName=tiny-url"
-);
+dotenv.config();
+mongoose.connect(process.env.MONGODB_URI);

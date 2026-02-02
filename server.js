@@ -3,7 +3,7 @@ import express from "express";
 import { Router } from "express";
 import cors from "cors";
 import router from "./routes/urlRoutes.js";
-import Url from "./schema/dataSchema.js";
+import Url from "./models/dataModel.js";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 

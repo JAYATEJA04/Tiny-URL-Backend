@@ -1,4 +1,4 @@
-import Url from "../schema/dataSchema.js";
+import Url from "../models/dataModel.js";
 import redisClient from "../redisClient.js";
 
 export const redirectToOriginalURL = async (req, res) => {
