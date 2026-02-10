@@ -4,13 +4,15 @@ import User from "../models/userModel.js";
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log("req.body is: ", req.body);
-  console.log("email is: ", email);
+  // console.log("req.body is: ", req.body);
+  // console.log("email is: ", email);
 
   const userExists = await User.findOne({ email });
 
   if (userExists) {
-    return res.status(400).json({ message: "User already exists." });
+    return res
+      .status(400)
+      .json({ success: false, message: "User already exists." });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,14 +23,12 @@ export const registerUser = async (req, res) => {
   });
 
   const token = generateToken(user._id);
-  console.log("token: ", token);
 
-  res.status(201).json({ token });
+  res.status(201).json("done great job", { token });
 };
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -42,5 +42,5 @@ export const login = async (req, res) => {
   }
 
   const token = generateToken(user._id);
-  res.json({ token });
+  res.json({ message: "Login Succesful", token });
 };
